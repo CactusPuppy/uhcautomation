@@ -65,7 +65,7 @@ public class SQLAPI {
             return isTable;
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            throw new ConnectException();
         }
     }
 

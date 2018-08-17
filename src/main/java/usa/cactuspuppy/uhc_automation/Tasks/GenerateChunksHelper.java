@@ -7,6 +7,8 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import usa.cactuspuppy.uhc_automation.Main;
 
+import java.util.logging.Level;
+
 public class GenerateChunksHelper implements Runnable {
     @Getter private static GenerateChunksHelper instance;
     private long startTime;
@@ -39,10 +41,11 @@ public class GenerateChunksHelper implements Runnable {
             long timeElapsed = System.currentTimeMillis() - startTime;
             Main.getInstance().getLogger().info(ChatColor.GREEN + "Chunk pre-generation complete! Took " + timeElapsed / 1000 + " seconds (" + timeElapsed + " ms)");
             Bukkit.getScheduler().cancelTask(schedulerID);
+            instance = null;
             return;
         }
         generateChunk(world.getChunkAt(chunkX, chunkZ));
-        Main.getInstance().getLogger().info("Generated chunk at chunk coords X: " + chunkX + ", Z: " + chunkZ);
+        Main.getInstance().getLogger().log(Level.FINE, "Generated chunk at chunk coords X: " + chunkX + ", Z: " + chunkZ);
         if (chunkZ == maxChunkZ) {
             chunkX++;
             chunkZ = minChunkZ;
@@ -62,6 +65,6 @@ public class GenerateChunksHelper implements Runnable {
     }
 
     public void schedule() {
-        schedulerID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), this, 0L, 5L);
+        schedulerID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), this, 0L, 2L);
     }
 }
