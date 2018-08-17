@@ -31,6 +31,7 @@ public class CommandPrep {
                 return;
             } else if (PreGameCountdown.instanced || Main.getInstance().getGameInstance().isActive()) {
                 sender.sendMessage(ChatColor.RED + "Game is starting or has started! Halt the game first with " + ChatColor.RESET + "/uhc reset" + ChatColor.RED + " or wait for the game to complete before pregenerating chunks!");
+                return;
             }
             (new GenerateChunksHelper()).schedule();
         } else if (args[0].equalsIgnoreCase("cancel")) {
@@ -42,6 +43,7 @@ public class CommandPrep {
             sender.sendMessage(ChatColor.GREEN + "Successfully halted chunk pre-generation.");
         } else if (!args[0].equalsIgnoreCase("noload")) {
             sender.sendMessage(ChatColor.RED + "Unrecognized argument " + ChatColor.RESET + args[0] + ".\nValid arguments: " + ChatColor.RESET + "noload, load, cancel");
+            return;
         }
         Main.getInstance().getGameInstance().prep();
     }

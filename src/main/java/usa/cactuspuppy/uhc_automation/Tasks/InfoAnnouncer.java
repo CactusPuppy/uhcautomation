@@ -20,28 +20,28 @@ public class InfoAnnouncer implements Runnable {
     private Set<UUID> objectivePlayerSet = new HashSet<>();
     private Scoreboard timeScoreboard;
     private Objective obj;
-    private Team timeDisplay;
+    private Team InfoDisplay;
 
     private static final String TIME_TEAM_ID = ChatColor.BLACK.toString() + ChatColor.WHITE.toString();
 
     public InfoAnnouncer() {
         timeScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        if (timeScoreboard.getObjective("TimeDisplay") == null) {
-            timeScoreboard.registerNewObjective("TimeDisplay", "dummy");
-        } else if (!timeScoreboard.getObjective("TimeDisplay").getCriteria().equals("dummy")) {
-            timeScoreboard.getObjective("TimeDisplay").unregister();
-            timeScoreboard.registerNewObjective("TimeDisplay", "dummy");
+        if (timeScoreboard.getObjective("InfoDisplay") == null) {
+            timeScoreboard.registerNewObjective("InfoDisplay", "dummy", "Game Info");
+        } else if (!timeScoreboard.getObjective("InfoDisplay").getCriteria().equals("dummy")) {
+            timeScoreboard.getObjective("InfoDisplay").unregister();
+            timeScoreboard.registerNewObjective("InfoDisplay", "dummy", "Game Info");
         }
         if (timeScoreboard.getObjective("Health2") == null) {
-            timeScoreboard.registerNewObjective("Health2", "health").setDisplaySlot(DisplaySlot.PLAYER_LIST);
+            timeScoreboard.registerNewObjective("Health2", "health", "Health").setDisplaySlot(DisplaySlot.PLAYER_LIST);
         } else if (!timeScoreboard.getObjective("Health2").getCriteria().equals("health")) {
             timeScoreboard.getObjective("Health2").unregister();
-            timeScoreboard.registerNewObjective("Health2", "health").setDisplaySlot(DisplaySlot.PLAYER_LIST);
+            timeScoreboard.registerNewObjective("Health2", "health", "Health").setDisplaySlot(DisplaySlot.PLAYER_LIST);
         }
-        obj = timeScoreboard.getObjective("TimeDisplay");
-        obj.setDisplayName(ChatColor.GOLD + Main.getInstance().getConfig().getString("event-name"));
-        timeDisplay = timeScoreboard.registerNewTeam("Time");
-        timeDisplay.addEntry(TIME_TEAM_ID);
+        obj = timeScoreboard.getObjective("InfoDisplay");
+        obj.setDisplayName(ChatColor.GOLD + Main.getInstance().getConfig().getString("event-name", "Game Info"));
+        InfoDisplay = timeScoreboard.registerNewTeam("Time");
+        InfoDisplay.addEntry(TIME_TEAM_ID);
         obj.getScore(ChatColor.GREEN + "» Time Elapsed:").setScore(15);
         obj.getScore(TIME_TEAM_ID).setScore(14);
     }
@@ -53,7 +53,7 @@ public class InfoAnnouncer implements Runnable {
 
     @Override
     public void run() {
-        timeDisplay.setPrefix(ChatColor.WHITE + UHCUtils.secsToFormatString2(UHCUtils.getSecsElapsed(Main.getInstance())));
+        InfoDisplay.setPrefix(ChatColor.WHITE + UHCUtils.secsToFormatString2(UHCUtils.getSecsElapsed(Main.getInstance())));
         Main.getInstance().getGameInstance().getActivePlayers().stream().map(Bukkit::getPlayer).forEach(this::showTimetoPlayer);
     }
 
@@ -82,6 +82,9 @@ public class InfoAnnouncer implements Runnable {
     }
 
     public void clearBoard() {
+        if (timeScoreboard.getObjective("FILL") != null) {
+            timeScoreboard.getObjective("FILL").unregister();
+        }
         timeScoreboard.registerNewObjective("FILL", "dummy").setDisplaySlot(DisplaySlot.SIDEBAR);
     }
 }
